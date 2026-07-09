@@ -18,7 +18,8 @@ secret_key = os.getenv('AMP_SECRET_KEY')
 
 # define api parameters
 starttime = '20260706T00'
-endtime = '20260706T23'
+#endtime = '20260706T23'
+endtime = datetime.now().strftime('%Y%m%dT%HH')
 
 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 log_dir = 'logs'
@@ -48,6 +49,7 @@ max_retry = 5
 attempt = 0
 delay = 10
 while attempt < max_retry:
+    logger.info(f'Attempting to retrieve data from Amplitude API, attempt number {attempt + 1}')
     response = requests.get(url, params=params, auth=(api_key, secret_key))
     status=response.status_code
     if status == 200:
@@ -127,6 +129,7 @@ while attempt < max_retry:
         break
     elif status <= 100 or status>=500:
         attempt=attempt+1
+        print(f'Sus status({status}) waiting to try again, attempt number {attempt+1}')
         logger.info(f'Sus status({status}) waiting to try again, attempt number {attempt+1}')
         time.sleep(delay)
     else : 
