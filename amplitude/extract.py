@@ -1,7 +1,6 @@
 import requests
 from datetime import datetime, timedelta
 import os
-import json
 import logging
 import time
 import zipfile
