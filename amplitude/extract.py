@@ -45,7 +45,7 @@ while current_start <= end_dt:
 
 #Logging set up
 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-log_dir = 'logs'
+log_dir = 'logs\extract'
 os.makedirs(log_dir, exist_ok=True)
 log_filename = f'{log_dir}/{timestamp}.log'
 
