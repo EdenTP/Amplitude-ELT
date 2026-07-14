@@ -1,5 +1,4 @@
 import requests
-from datetime import datetime, timedelta
 from modules.daily_chunks import daily_chunks_generator
 import os
 import logging
@@ -8,25 +7,25 @@ import zipfile
 import gzip
 import shutil
 
+logger=logging.getLogger(__name__)
 
-def amplitude_extract(start, end, AMP_API_KEY,AMP_SECRET_KEY):
-    api_key=AMP_API_KEY
-    secret_key=AMP_SECRET_KEY
+def amplitude_extract(start, end, api_key,secret_key):
+    """
+        Extract amplitude data from the Amplitude API.
+
+        Args:
+            start (str): The start date for the data extraction.
+            end (str): The end date for the data extraction.
+            api_key (str): The API key for authenticating with the Amplitude API.
+            secret_key (str): The secret key for authenticating with the Amplitude API.
+
+        Returns:
+            None, but saves the extracted data to a JSON file folder.
+        """
+
+ 
     daily_chunks = daily_chunks_generator(start, end)
-    #Logging set up
-    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    log_dir = 'logs/extract'
-    os.makedirs(log_dir, exist_ok=True)
-    log_filename = f'{log_dir}/{timestamp}.log'
-
-    logging.basicConfig(
-        filename=log_filename,
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-    )
-
-    logger = logging.getLogger()
-    logger.info('Logger has lift off')
+    
     os.makedirs('data', exist_ok=True)
     data_dir = 'data'
 
@@ -44,7 +43,6 @@ def amplitude_extract(start, end, AMP_API_KEY,AMP_SECRET_KEY):
 
         starttime, endtime = daily_chunks[i]
         logger.info(f'Attempting to retrieve data for chunk {starttime} to {endtime}')
-        print(f'Attempting to retrieve data for chunk {starttime} to {endtime}')
         while attempt < max_retry:
             params = {
             'start': starttime,

@@ -1,29 +1,24 @@
 import os
 import boto3
 import logging
-from datetime import datetime
 
+logger=logging.getLogger(__name__)
 
 def amplitude_load(aws_access_key,aws_secret_access_key,aws_bucket_name):
-    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    log_dir = 'logs/load'
-    os.makedirs(log_dir, exist_ok=True)
-    log_filename = f'{log_dir}/load_{timestamp}.log'
+    """
+        Load amplitude data to S3.
+
+        Args:
+            aws_access_key (str): The AWS access key for authenticating with S3.
+            aws_secret_access_key (str): The AWS secret access key for authenticating with S3
+            aws_bucket_name (str): The name of the S3 bucket where the data will be loaded.
+
+        Returns:
+            None, but uploads the extracted data to the specified S3 bucket.
+        """
+    
     data_dir='data'
-
-    handlers=[
-        logging.FileHandler(f"{log_filename}"),  # Saves to file
-        logging.StreamHandler()                        # Prints to terminal
-    ]
-    logging.basicConfig(
-        format = '%(asctime)s - %(levelname)s - %(message)s',
-        level=logging.INFO,
-        handlers=handlers
-    )
-
-    logger = logging.getLogger()
-
-
+    
     s3_client=boto3.client(
         's3',
         aws_access_key_id = aws_access_key,
