@@ -141,8 +141,6 @@ flowchart TD
     S3 -->|3. Copied into| Snowflake[❄️ Snowflake]:::snow
 ```
 
-**Compute (Virtual Warehouse):** Before pulling any data, a Snowflake schema is created(selected) so we have a location for our amplitude data.
-
 **Storage Integration:** Set up a secure Snowflake object (`STORAGE_INTEGRATION`) that maps directly to our AWS IAM Role ARN. This integration object stores the cloud provider configurations.
 
 **The Trust Handshake:** This is where the two platforms actually connect. After creating the Storage Integration, we run a `DESC INTEGRATION` command in Snowflake. This generates two unique values: Snowflake's internal AWS User ARN and a specific External ID. We take these values and paste them into the AWS IAM Role's trust relationship JSON.
