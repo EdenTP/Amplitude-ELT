@@ -32,7 +32,7 @@ Time Chunking:
 Automatically breaks down the timeframe into manageable daily chunks (from a set start date up to the current hour).
 
 Built-in Retry Logic:
-Catches those sus 5xx server statuses and safely retries before throwing a PANIK.
+Catches 5xx server statuses and safely retries before logging errors.
 
 Auto-Extraction:
 Handles the nested Russian-doll situation of ZIP -> GZ -> JSON automatically.
