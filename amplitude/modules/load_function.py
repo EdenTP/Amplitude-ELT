@@ -46,8 +46,8 @@ def amplitude_load(aws_access_key,aws_secret_access_key,aws_bucket_name):
         
         for file in files:
             file_path=os.path.join(root,file)
-
-            if file_exists_in_s3(file_path) == True:
+            s3_path=f'python-import/{file}'
+            if file_exists_in_s3(s3_path) == True:
                 logger.info(f'{file}: Im already there')
 
             elif file.endswith('.json'):

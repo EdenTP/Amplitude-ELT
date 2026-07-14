@@ -16,5 +16,5 @@ AWS_BUCKET_NAME=os.getenv('AWS_BUCKET_NAME')
 start_dttime_str = '20260706T00'
 end_dttime_str = '20260710T23'
 
-amplitude_extract(start_dttime_str, end_dttime_str, api_key,secret_key)
+#amplitude_extract(start_dttime_str, end_dttime_str, api_key,secret_key)
 amplitude_load(AWS_ACCESS_KEY,AWS_SECRET_ACCESS_KEY,AWS_BUCKET_NAME)
