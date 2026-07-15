@@ -69,9 +69,6 @@ def amplitude_extract(start, end, api_key,secret_key):
                 JSON_dir = os.path.join(data_dir, f'json_files_{starttime}_to_{endtime}')
                 os.makedirs(JSON_dir, exist_ok=True)
                 
-                #print and log current status
-                print('Extracting files...')
-                logger.info('Extracting files...')
                 #using zip module to extract, 'r' argument is for reading
                 with zipfile.ZipFile(zip_filepath, 'r') as zip_ref:
                     zip_ref.extractall(extract_dir)
@@ -97,15 +94,13 @@ def amplitude_extract(start, end, api_key,secret_key):
                             new_filename = file.replace('.gz', '')
                             #create a json file_path(os.path.join) makes filepaths so you don't have to figure out operating system filepath syntax
                             json_path = os.path.join(JSON_dir, new_filename)
-                            
-                            print(f'Decompressing to: {json_path}')
-                            logger.info(f'Decompressing to: {json_path}')
 
                             #gzip deals with GZIPS, here we open the gzip then we open the json file and copy the contents of the gzip to the json file.
                             with gzip.open(gz_path, 'rb') as f_in:
                                 with open(json_path, 'wb') as f_out:
                                     shutil.copyfileobj(f_in, f_out)
                                     json_file_count += 1
+                            logger.info(f'Extracted {gz_path}')
 
                             
                             # --- VERIFICATION & CLEANUP ---
@@ -114,17 +109,14 @@ def amplitude_extract(start, end, api_key,secret_key):
                                 logger.info(f'Verified {new_filename}. Deleting original {file}')
                                 os.remove(gz_path) # Delete the individual .gz file
                             else:
-                                print(f'WARNING: {new_filename} failed extraction or is empty.')
-                                logger.error(f'Failed extraction for {new_filename}.')
+                                #logger.error(f'Failed extraction for {new_filename}.')
                                 failed_files.append(gz_path)
 
-                if gz_file_count>json_file_count:
-                    print(f'Extraction fail for {gz_file_count-json_file_count} files :{failed_files}')
-                    logger.error(f'Extraction fail for {gz_file_count-json_file_count} files :{failed_files}')          
+                # if gz_file_count>json_file_count:
+                #     logger.error(f'Extraction fail for {gz_file_count-json_file_count} files :{failed_files}')          
                 
                 
                 # 4. Final Cleanup
-                print('Cleaning up temporary files...')
                 logger.info('Cleaning up temporary files...')
                 # Delete the original downloaded zip file
 
@@ -137,18 +129,17 @@ def amplitude_extract(start, end, api_key,secret_key):
                 if os.path.exists(extract_dir):
                     shutil.rmtree(extract_dir)
                     logger.info(f'Deleted temporary extraction directory: {extract_dir}')
-                    
-                print(f'Cleanup complete. Your {starttime} to {endtime} data is ready in: {JSON_dir}')
                 logger.info(f'Cleanup complete. Your {starttime} to {endtime} data is ready in: {JSON_dir}')
                 break
             elif status <= 100 or status>=500:
                 attempt=attempt+1
-                print(f'Sus status({status}) waiting to try again, attempt number {attempt+1}')
-                logger.info(f'Sus status({status}) waiting to try again, attempt number {attempt+1}')
+                logger.warning(f'Sus status({status}) waiting to try again, attempt number {attempt+1}')
                 time.sleep(delay)
             else : 
-                logger.info(f'PANIK! status code {status} on attempt {attempt+1}')
+                logger.error(f'PANIK! status code {status} on attempt {attempt+1}')
                 break
-    print(f'Pipeline complete! All daily chunks from {start} to {end} have been extracted.')
-    logger.info('Pipeline complete! All chunks processed successfully.')
+    if json_file_count == gz_file_count:
+        logger.info('Pipeline complete! All chunks processed successfully.')
+    else:
+        logger.error(f'Extraction fail for {gz_file_count-json_file_count} files :{failed_files}')  
     return None
