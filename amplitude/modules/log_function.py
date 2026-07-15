@@ -1,31 +1,33 @@
 import logging
 import os
+import sys
 
-def log_config(timestamp:str,log_dir:str):
-    """
-    Sets up logging configuration for the application.
-
-    Args:
-        timestamp (str): For the filename of the logs.
-        log_dir (str): Where we want the logs stored.
-
-    Returns:
-        logger (logging.Logger): Configured logger instance.
-    """
-
+def log_config(timestamp: str, log_dir: str):
     os.makedirs(log_dir, exist_ok=True)
-    log_filename = f'{log_dir}/{timestamp}.log'
-
-    handlers=[
-        logging.FileHandler(f"{log_filename}"),  # Saves to file
-        logging.StreamHandler()                        # Prints to terminal
-    ]
-    logging.basicConfig(
-        format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO,
-        force=True,
-        handlers=handlers
-    )
+    log_filename = f"{log_dir}/{timestamp}.log"
 
     logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logger.handlers = []
+
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
+    stdout_handler = logging.StreamHandler(stream=sys.stdout)
+    stdout_handler.setLevel(logging.INFO)
+    stdout_handler.setFormatter(formatter)
+
+    stderr_handler = logging.StreamHandler(stream=sys.stderr)
+    stderr_handler.setLevel(logging.WARNING)
+    stderr_handler.setFormatter(formatter)
+
+    file_handler = logging.FileHandler(log_filename)
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+
+    logger.addHandler(stdout_handler)
+    logger.addHandler(stderr_handler)
+    logger.addHandler(file_handler)
+
     return logger
